@@ -119,6 +119,49 @@ make(type, len, cap)
 
 
 
+### 方法
+
+#### 指针域值
+
+方法的接收者不一定必须是结构体
+
+```go
+type byteSlice []byte
+func (bs byteSlice) append(data []byte) []byte {
+    return append(bs, data...)
+}
+func (bsp *byteSlice) append(data []byte) []byte {
+    return append(*bs, data...)
+}
+```
+
+**值接收者方法既可以被值和指针调用，而指针接收者只能被指针调用**
 
 
-### 
+
+### 接口与其他类型
+
+Golang提供了一种方式来指定对象的行为；一个类型可以实现多个接口，
+
+#### 接口转换及类型断言
+
+```go
+type Stringer interface {
+    String() string
+}
+
+var value interface{} // Value provided by caller.
+switch str := value.(type) {
+case string:
+    return str
+case Stringer:
+    return str.String()
+}
+
+str, ok := value.(string)
+if ok {
+    fmt.Printf("string value is: %q\n", str)
+} else {
+    fmt.Printf("value is not a string\n")
+}
+```
